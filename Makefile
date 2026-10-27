@@ -11,7 +11,7 @@ SIM_OBJ  := build/sim_main.o
 SIM2_OBJ := build/sim_compare.o
 SIM_COMMON_OBJ := build/sim_common.o
 
-.PHONY: all test sim compare plot clean run-test run-sim
+.PHONY: all test sim compare plot exp clean run-test run-sim
 
 all: test sim plot
 
@@ -48,6 +48,15 @@ compare: build/sim_compare
 
 plot: sim
 	python3 tools/plot_sim.py
+
+build/pid_step.o: experiments/pid_step.c | build
+	$(CC) $(CFLAGS) -c $< -o $@
+
+build/pid_step: build/pid_step.o $(OBJ)
+	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS) $(LDLIBS)
+
+exp: build/pid_step
+	./build/pid_step
 
 run-test: test
 run-sim: sim
