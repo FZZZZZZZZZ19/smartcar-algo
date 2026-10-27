@@ -91,7 +91,9 @@ static float pid_position_update(sc_pid_t *p, float e, float meas, float dt) {
     d_raw = p->kd * (e - p->e1) / dt;
   }
 
-  p->d_filt = p->d_alpha * p->d_filt + (1.0f - p->d_alpha) * d_raw;
+  /* d_alpha = 1 表示不滤波，直接使用本次微分；
+   * d_alpha 越小，越依赖历史，微分越平滑但滞后越大。 */
+  p->d_filt = p->d_alpha * d_raw + (1.0f - p->d_alpha) * p->d_filt;
 
   float u = p_term + integ_new + p->d_filt;
 
